@@ -1,2 +1,4 @@
 requirements.txt
 db.sqlite3
+__pycache__
+vs code
