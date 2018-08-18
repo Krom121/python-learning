@@ -40,4 +40,49 @@ def neighbours_of_position(coords):
     return [top_left, top_center, top_right,
                 left, right,
                 bottom_left, bottom_center, 
-                bottom_right ]
+                bottom_right]
+
+def all_grid_neighbours(grid):
+    """
+    get all of the poss neighbours for each position
+    """
+    neighbours = {}
+    for position in grid:
+        position_neighbours = neighbours_of_position(position)
+        neighbours[position] = [p for p in position_neighbours if p in grid]
+    return neighbours
+
+def path_to_word(grid, path):
+    """
+    add all the letters on the path to a string
+    """
+    return ''.join(grid[p] for p in path)
+
+def search(grid,dictionary):
+    """
+    search through the paths to locate words
+    """
+    neighbours = all_grid_neighbours(grid)
+    paths = []
+
+    def do_search(path):
+        word = path_to_word(grid, path)
+        if word in dictionary:
+            paths.append(path)
+        for next_pos in neighbours[path[-1]]:
+            if next_pos not in path:
+                do_search(path + [next_pos])
+
+    for position in grid:
+        do_search([position])
+    words = []
+    for path in paths:
+        words.append(path_to_word(grid,path))
+    return set(words)
+
+def get_dictionary(dictionary_file):
+    """
+    load dictionary
+    """
+    with open(dictionary_file) as f:
+        return [w.strips().upper() for w in f]
